@@ -1,0 +1,30 @@
+name: "infra app"
+trigger: none
+pool: vinod
+steps:
+- task: TerraformTask@5
+  displayname:Terraform init
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+    backendServiceArm: 'vinod service connection'
+    backendAzureRmResourceGroupName: 'rg-rohit'
+    backendAzureRmStorageAccountName: 'stgrohit'
+    backendAzureRmContainerName: 'container-rohit'
+    backendAzureRmKey: 'rohit.tfstate'
+
+- task: TerraformTask@5
+  displayname:Terraform validate
+  inputs:
+    provider: 'azurerm'
+    command: 'validate'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+    
+- task: TerraformTask@5
+  displayname:Terraform plan
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+    environmentServiceNameAzureRM: 'vinod service connection'
