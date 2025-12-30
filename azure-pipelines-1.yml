@@ -1,0 +1,34 @@
+name: "infra app"
+
+trigger: none
+
+pool:
+  name: vinod   # assuming this is a self-hosted agent pool
+
+steps:
+- task: TerraformTask@5
+  displayName: Terraform init
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+    backendServiceArm: 'vinod service connection'
+    backendAzureRmResourceGroupName: 'rg-rohit'
+    backendAzureRmStorageAccountName: 'stgrohit'
+    backendAzureRmContainerName: 'container-rohit'
+    backendAzureRmKey: 'rohit.tfstate'
+
+- task: TerraformTask@5
+  displayName: Terraform validate
+  inputs:
+    provider: 'azurerm'
+    command: 'validate'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+
+- task: TerraformTask@5
+  displayName: Terraform plan
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+    environmentServiceNameAzureRM: 'vinod service connection'
