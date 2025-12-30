@@ -3,9 +3,16 @@ name: "infra app"
 trigger: none
 
 pool:
-  name: vinod   # assuming this is a self-hosted agent pool
+  name: vinod
 
 steps:
+# 🔹 Install Terraform (REQUIRED for self-hosted agent)
+- task: TerraformInstaller@1
+  displayName: Install Terraform
+  inputs:
+    terraformVersion: '1.10.5'
+
+# 🔹 Terraform Init
 - task: TerraformTask@5
   displayName: Terraform init
   inputs:
@@ -18,6 +25,7 @@ steps:
     backendAzureRmContainerName: 'container-rohit'
     backendAzureRmKey: 'rohit.tfstate'
 
+# 🔹 Terraform Validate
 - task: TerraformTask@5
   displayName: Terraform validate
   inputs:
@@ -25,6 +33,7 @@ steps:
     command: 'validate'
     workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
 
+# 🔹 Terraform Plan
 - task: TerraformTask@5
   displayName: Terraform plan
   inputs:
